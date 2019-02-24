@@ -1,24 +1,27 @@
 <?php
 
-use App\Events\OrderStatusUpdated;
-
-
-class order{
-	public $id;
-
-	public function __construct($id)
-	{
-		$this->id = $id;
-	}
-}
+use App\Events\TaskCreated;
+use App\Task;
+use Illuminate\Http\Request;
+ use App\Events\OrderStatusUpdated;
+ 
 
 
 Route::get('/', function () {
-
 	return view('welcome');
 });
 
 
-Route::get('update',function(){
-	OrderStatusUpdated::dispatch(new order(5));
+Route::get('tasks',function(){
+	return Task::latest()->pluck('body');
 });
+
+
+Route::post('tasks',function(Request $request){
+$task = Task::Create([
+		'body'=>$request->body
+	]);
+	event(new TaskCreated($task));
+});
+
+ 
